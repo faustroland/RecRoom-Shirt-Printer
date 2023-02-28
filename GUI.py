@@ -183,8 +183,6 @@ def save_image_data():
     global IMG_DATA, save_data, open_encoded_data, DATA_PATH
     root = Tk()
     root.withdraw()
-    root.attributes("-topmost", 1)
-    root.title("Select folder to save image data")
     DATA_PATH = filedialog.askdirectory() + "/encoded_" + str(IMAGE_PATH.stem) + ".txt"
     root.destroy()
 
@@ -201,7 +199,6 @@ def save_image_data():
 def save_new_image():
     global save_image, PATH
     root = Tk()
-    root.attributes("-topmost", 1)
     root.withdraw()
     PATH = filedialog.askdirectory() + "/converted_" + str(IMAGE_PATH.stem.split("/")[-1]) + ".png"
     print(PATH)

@@ -53,10 +53,13 @@ def copy_to_recroom(img_data: list[str], delay: float = 0.3, last_successful_str
     input_field: Coords = (int(SCREEN_DIMENSIONS[0] * 0.5), int(SCREEN_DIMENSIONS[1] * 0.34))
     done_button: Coords = (int(SCREEN_DIMENSIONS[0] * 0.11), int(SCREEN_DIMENSIONS[1] * 0.52))
 
-    color_checking_coords: List[Tuple[int, int]] = [(int(SCREEN_DIMENSIONS[0] * 0.25),
-                                                     int(SCREEN_DIMENSIONS[1] * 0.5)),
-                                                    (int(SCREEN_DIMENSIONS[0] * 0.35),
-                                                     int(SCREEN_DIMENSIONS[1] * 0.5) + 5)]
+    #color_checking_coords: List[Tuple[int, int]] = [(int(SCREEN_DIMENSIONS[0] * 0.25),
+    #                                                 int(SCREEN_DIMENSIONS[1] * 0.5)),
+    #                                                (int(SCREEN_DIMENSIONS[0] * 0.35),
+    #                                                 int(SCREEN_DIMENSIONS[1] * 0.5) + 5)]
+
+    color_checking_coords: List[Tuple[int, int]] = [(807,518),(807+51,518+4)]
+
 
     if ask_to_continue:
         if "n" in input(f"\nProceed to copy all {num_strings} strings to {window_title}? [y/n] ").lower():
@@ -84,14 +87,15 @@ def copy_to_recroom(img_data: list[str], delay: float = 0.3, last_successful_str
         print(f"Copying string #{num + 1}/{num_strings}")
         time.sleep(delay)
 
-        for _ in range(10):
+        for _ in range(300000):
+            is_window_active(window_title)
             # Click `List Create` string entry
             pyautogui.click()
             time.sleep(delay)
 
             # Click on the input field
             pyautogui.click(input_field)
-            time.sleep(delay / 2)
+            time.sleep(delay)
 
             # Paste the string into input field
             pyautogui.hotkey("ctrl", "v")
@@ -103,24 +107,25 @@ def copy_to_recroom(img_data: list[str], delay: float = 0.3, last_successful_str
 
             # Exit out of the input field menu
             pyautogui.press("esc")
-            time.sleep(delay / 2)
+            time.sleep(delay * 2)
 
             if color_checking:
                 color_check_image = ImageGrab.grab()
                 # Check for `purple` (string input background)
                 if color_in_coords(image=color_check_image,
-                                   color=(157, 145, 187),
+                                  # color=(157, 145, 187),
+                                   color=(240,157,231),
                                    coordinates=color_checking_coords,
                                    tolerance=60):
                     break
                 print("Failed")
-                # time.sleep(delay)
+                time.sleep(delay*200)
             else:
                 break
 
         # Move down using trigger handle in right hand
         pyautogui.click(button='right')
-        time.sleep(delay / 3)
+        time.sleep(delay / 2)
 
     # Print out the time used for importing
     time_to_copy = time.time() - time_at_start
@@ -139,7 +144,8 @@ def main(from_file: bool = False):
         image, img_data = Encoding.main(list_size=64)
     else:
         try:
-            with open("image_data.txt", "r", encoding="UTF-8") as f:
+#            with open("image_data.txt", "r", encoding='utf-8') as f:
+            with open("image_data.txt", "r") as f:
                 temp: list[str] = f.readlines()
                 img_data = [line.strip() for line in temp]
         except FileNotFoundError:
@@ -170,3 +176,4 @@ if __name__ == "__main__":
         main(from_file="y" in input("Use the encoded data in `image_data.txt`? [yes/no]\n > "))
     except (Exception, KeyboardInterrupt):
         log.exception("ERROR", exc_info=True)
+    input("Press Enter")
